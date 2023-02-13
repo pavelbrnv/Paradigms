@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Paradigms
 {
@@ -64,6 +66,17 @@ namespace Paradigms
 			return Cartesian2D.Create(
 				x: point.X + offset.X,
 				y: point.Y + offset.Y);
+		}
+
+		#endregion
+
+		#region Task 3
+
+		public static Cartesian2D GetAverage(this IReadOnlyCollection<Cartesian2D> points)
+		{
+			return Cartesian2D.Create(
+				x: points.Average(point => point.X),
+				y: points.Average(point => point.Y));
 		}
 
 		#endregion

@@ -42,6 +42,29 @@ namespace Paradigms
 			);
 
 			#endregion
+
+			#region Task 3
+
+			radarPoint = new Point2D(1.0, 3.0);
+			var detections = new Point2D[]
+			{
+				Point2D.FromPolarInDegrees(30.0, 5.0),
+				Point2D.FromPolarInDegrees(32.0, 5.1),
+				Point2D.FromPolarInDegrees(31.3, 4.9),
+				Point2D.FromPolarInDegrees(32.2, 5.4)
+			};
+			var detectedPoints = new Point2D[]
+			{
+				radarPoint + detections[0],
+				radarPoint + detections[1],
+				radarPoint + detections[2],
+				radarPoint + detections[3]
+			};
+			var detectedAveragePoint = MathUtils.GetAverage(detectedPoints);
+			var detectedDeviation = MathUtils.GetStandardDeviation(detectedPoints, detectedAveragePoint);
+			Console.WriteLine($"Deviation - {detectedDeviation}");
+
+			#endregion
 		}
 	}
 }
