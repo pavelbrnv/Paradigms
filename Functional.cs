@@ -18,6 +18,15 @@ namespace Paradigms
 				Y = y
 			};
 		}
+
+		#region Task 3
+
+		public static Cartesian2D[] CreateMany(params Cartesian2D[] points)
+		{
+			return points;
+		}
+
+		#endregion
 	}
 	
 	public sealed class Polar2D
@@ -34,6 +43,15 @@ namespace Paradigms
 				Radius = radius
 			};
 		}
+
+		#region Task 3
+
+		public static Polar2D[] CreateMany(params Polar2D[] points)
+		{
+			return points;
+		}
+
+		#endregion
 	}
 	
 	public static class CoordinatesExtensions
@@ -71,6 +89,30 @@ namespace Paradigms
 		#endregion
 
 		#region Task 3
+
+		public static IReadOnlyList<Cartesian2D> ShiftMany(this IReadOnlyList<Cartesian2D> points, Cartesian2D offset)
+		{
+			return points
+				.Select(point => point.Shift(offset))
+				.ToArray();
+		}
+		
+		public static double GetDistanceTo(this Cartesian2D point, Cartesian2D other)
+		{
+			return Math.Sqrt(Math.Pow(point.X - other.X, 2) + Math.Pow(point.Y - other.Y, 2));
+		}
+
+		public static double GetStandardDeviation(this IReadOnlyList<Cartesian2D> points, Cartesian2D referencePoint)
+		{
+			return Math.Sqrt(points.Sum(point => Math.Pow(point.GetDistanceTo(referencePoint), 2)) / points.Count);
+		}
+
+		public static double GetStandardDeviationFromAverage(this IReadOnlyList<Cartesian2D> points)
+		{
+			return GetStandardDeviation(
+				points: points,
+				referencePoint: points.GetAverage());
+		}
 
 		public static Cartesian2D GetAverage(this IReadOnlyCollection<Cartesian2D> points)
 		{
