@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Paradigms
 {
@@ -16,7 +15,7 @@ namespace Paradigms
 
 		#region Task 3
 
-		public static Point2D GetAverage(IReadOnlyCollection<Point2D> points)
+		public static Point2D GetAverage(Point2D[] points)
 		{
 			double totalX = 0;
 			double totalY = 0;
@@ -27,22 +26,23 @@ namespace Paradigms
 				totalY += point.Y;
 			}
 
-			double averageX = totalX / points.Count;
-			double averageY = totalY / points.Count;
+			double averageX = totalX / points.Length;
+			double averageY = totalY / points.Length;
 
 			return new Point2D(averageX, averageY);
 		}
 
-		public static double GetStandardDeviation(IReadOnlyList<Point2D> points, Point2D referencePoint)
+		public static double GetStandardDeviation(Point2D[] points, Point2D referencePoint)
 		{
 			var deviation = 0.0;
+
 			foreach (var point in points)
 			{
 				var distance = point.GetDistanceTo(referencePoint);
 				deviation += distance * distance;
 			}
 
-			var standardDeviation = Math.Sqrt(deviation / points.Count);
+			var standardDeviation = Math.Sqrt(deviation / points.Length);
 			return standardDeviation;
 		}
 
@@ -104,10 +104,27 @@ namespace Paradigms
 
 		#region Task 3
 
+		public static Point2D[] ShiftMany(Point2D[] points, Point2D offset)
+		{
+			Point2D[] shiftedPoints = new Point2D[points.Length];
+
+			for (int i = 0; i < shiftedPoints.Length; i++)
+			{
+				shiftedPoints[i] = points[i] + offset;
+			}
+
+			return shiftedPoints;
+		}
+		
+		public double GetRadius()
+		{
+			return Math.Sqrt(X * X + Y * Y);
+		}
+
 		public double GetDistanceTo(Point2D other)
 		{
-			var distanceSquare = Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2);
-			return Math.Sqrt(distanceSquare);
+			var offset = this - other;
+			return offset.GetRadius();
 		}
 
 		#endregion

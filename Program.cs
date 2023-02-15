@@ -6,12 +6,18 @@ namespace Paradigms
 	{
 		static void Main(string[] args)
 		{
-			#region Task 1
-			
-			(double x, double y) = Procedural.ConvertFromPolarToCartesian(30.0, 5.0);
+			Task1();
+			Task2();
+			Task3();
+			Task4();
+		}
+
+		public static void Task1()
+		{
+			(double x, double y) = Procedural.ConvertFromPolarInDegreesToCartesian(30.0, 5.0);
 			Procedural.Print(x, y);
 
-			var point = Point2D.FromPolarInDegrees(30.0, 5.0);
+			Point2D point = Point2D.FromPolarInDegrees(30.0, 5.0);
 			Console.WriteLine(point);
 
 			Console.WriteLine(
@@ -20,17 +26,17 @@ namespace Paradigms
 					.ToCartesian2D()
 					.GetDescription()
 			);
+		}
 
-			#endregion
-
-			#region Task 2
-
-			(x, y) = Procedural.GetDetectedPoint(1.0, 3.0, 30.0, 5.0);
+		public static void Task2()
+		{
+			(double detectionX, double detectionY) = Procedural.ConvertFromPolarInDegreesToCartesian(30.0, 5.0);
+			(double x, double y) = Procedural.AddPoints(1.0, 3.0, detectionX, detectionY);
 			Procedural.Print(x, y);
 
-			var radarPoint = new Point2D(1.0, 3.0);
-			var radarDetection = Point2D.FromPolarInDegrees(30.0, 5.0);
-			var objectPoint = radarPoint + radarDetection;
+			Point2D radarPoint = new Point2D(1.0, 3.0);
+			Point2D radarDetection = Point2D.FromPolarInDegrees(30.0, 5.0);
+			Point2D objectPoint = radarPoint + radarDetection;
 			Console.WriteLine(objectPoint);
 
 			Console.WriteLine(
@@ -42,40 +48,34 @@ namespace Paradigms
 							.ToCartesian2D())
 					.GetDescription()
 			);
+		}
 
-			#endregion
-
-			#region Task 3
-
-			var detectedAnglesAndDistances = new[,]
+		public static void Task3()
+		{
+			double[,] detectedAnglesAndDistances = new double[,]
 			{
 				{ 30.0, 5.0 },
 				{ 32.0, 5.1 },
 				{ 31.3, 4.9 },
 				{ 32.2, 5.4 }
 			};
-			double[,] detectedPointsXY = Procedural.GetDetectedPoints(1.0, 3.0, detectedAnglesAndDistances);
+			double[,] detectionsXY = Procedural.ConvertManyFromPolarInDegreesToCartesian(detectedAnglesAndDistances);
+			double[,] detectedPointsXY = Procedural.GetShiftedPoints(detectionsXY, 1.0, 3.0);
 			(double averageX, double averageY) = Procedural.GetAveragePoint(detectedPointsXY);
 			double deviation = Procedural.GetStandardDeviation(detectedPointsXY, averageX, averageY);
 			Console.WriteLine($"Deviation - {deviation}");
 
-			radarPoint = new Point2D(1.0, 3.0);
-			var detections = new Point2D[]
+			Point2D radarPoint = new Point2D(1.0, 3.0);
+			Point2D[] detections = new Point2D[]
 			{
 				Point2D.FromPolarInDegrees(30.0, 5.0),
 				Point2D.FromPolarInDegrees(32.0, 5.1),
 				Point2D.FromPolarInDegrees(31.3, 4.9),
 				Point2D.FromPolarInDegrees(32.2, 5.4)
 			};
-			var detectedPoints = new Point2D[]
-			{
-				radarPoint + detections[0],
-				radarPoint + detections[1],
-				radarPoint + detections[2],
-				radarPoint + detections[3]
-			};
-			var detectedAveragePoint = MathUtils.GetAverage(detectedPoints);
-			var detectedDeviation = MathUtils.GetStandardDeviation(detectedPoints, detectedAveragePoint);
+			Point2D[] detectedPoints = Point2D.ShiftMany(detections, radarPoint);
+			Point2D detectedAveragePoint = MathUtils.GetAverage(detectedPoints);
+			double detectedDeviation = MathUtils.GetStandardDeviation(detectedPoints, detectedAveragePoint);
 			Console.WriteLine($"Deviation - {detectedDeviation}");
 
 			Console.WriteLine("Deviation - {0}",
@@ -88,8 +88,26 @@ namespace Paradigms
 					.ShiftMany(Cartesian2D.Create(1.0, 3.0))
 					.GetStandardDeviationFromAverage()
 			);
+		}
 
-			#endregion
+		public static void Task4()
+		{
+			Point3D radarPoint = new Point3D(1.0, 3.0, 2.0);
+			Point3D[] detections = new Point3D[]
+			{
+				Point3D.FromPolarInDegrees(30.0, 45.0, 5.0),
+				Point3D.FromPolarInDegrees(32.0, 44.2, 5.1),
+				Point3D.FromPolarInDegrees(31.3, 44.7, 4.9),
+				Point3D.FromPolarInDegrees(32.2, 45.1, 5.4)
+			};
+
+			Points3DCalculator calculator = new Points3DCalculator();
+
+			Point3D[] detectedPoints = calculator.ShiftMany(detections, radarPoint);
+			Point3D detectedAveragePoint = calculator.GetAverage(detectedPoints);
+			double detectedDeviation = calculator.GetStandardDeviation(detectedPoints, detectedAveragePoint);
+
+			Console.WriteLine($"Deviation 3D - {detectedDeviation}");
 		}
 	}
 }

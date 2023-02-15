@@ -6,12 +6,12 @@ namespace Paradigms
 	{
 		#region Task 1
 		
-		public static (double x, double y) ConvertFromPolarToCartesian(double angleInDegrees, double distance)
+		public static (double x, double y) ConvertFromPolarInDegreesToCartesian(double angleInDegrees, double radius)
 		{
 			double angleInRadians = DegreesToRadians(angleInDegrees);
 
-			double x = Math.Cos(angleInRadians) * distance;
-			double y = Math.Sin(angleInRadians) * distance;
+			double x = Math.Cos(angleInRadians) * radius;
+			double y = Math.Sin(angleInRadians) * radius;
 
 			return (x, y);
 		}
@@ -29,14 +29,11 @@ namespace Paradigms
 		#endregion
 
 		#region Task 2
-		
-		public static (double x, double y) GetDetectedPoint(double radarX, double radarY, double detectedAngleInDegrees, double detectedDistance)
+
+		public static (double x, double y) AddPoints(double firstX, double firstY, double secondX, double secondY)
 		{
-			(double detectedOffsetX, double detectedOffsetY) = ConvertFromPolarToCartesian(detectedAngleInDegrees, detectedDistance);
-
-			double x = radarX + detectedOffsetX;
-			double y = radarY + detectedOffsetY;
-
+			double x = firstX + secondX;
+			double y = firstY + secondY;
 			return (x, y);
 		}
 
@@ -44,31 +41,58 @@ namespace Paradigms
 
 		#region Task 3
 
-		/// <param name="detections">
+		/// <param name="points">
 		/// In each row:
-		/// Value by index 0 is detected angle in degrees.
-		/// Value by index 1 is detected distance.
+		/// Value by index 0 is angle in degrees.
+		/// Value by index 1 is radius.
 		/// </param>
 		/// <returns>
 		/// In each row:
-		/// Value by index 0 is detected X.
-		/// Value by index 1 is detected Y.
+		/// Value by index 0 is X.
+		/// Value by index 1 is Y.
 		/// </returns>
-		public static double[,] GetDetectedPoints(double radarX, double radarY, double[,] detections)
+		public static double[,] ConvertManyFromPolarInDegreesToCartesian(double[,] points)
 		{
-			double[,] radarDetections = new double[detections.GetLength(0), detections.GetLength(1)];
+			double[,] convertedPoints = new double[points.GetLength(0), 2];
 
-			for (int i = 0; i < detections.GetLength(0); i++)
+			for (int i = 0; i < points.GetLength(0); i++)
 			{
-				double detectedAngleInDegrees = detections[i, 0];
-				double detectedDistance = detections[i, 1];
+				double angleInDegrees = points[i, 0];
+				double radius = points[i, 1];
 
-				(double x, double y) = GetDetectedPoint(radarX, radarY, detectedAngleInDegrees, detectedDistance);
-				radarDetections[i, 0] = x;
-				radarDetections[i, 1] = y;
+				(double x, double y) = ConvertFromPolarInDegreesToCartesian(angleInDegrees, radius);
+				convertedPoints[i, 0] = x;
+				convertedPoints[i, 1] = y;
 			}
 
-			return radarDetections;
+			return convertedPoints;
+		}
+
+		/// <param name="points">
+		/// In each row:
+		/// Value by index 0 is initial X.
+		/// Value by index 1 is initial Y.
+		/// </param>
+		/// <returns>
+		/// In each row:
+		/// Value by index 0 is shifted X.
+		/// Value by index 1 is shifted Y.
+		/// </returns>
+		public static double[,] GetShiftedPoints(double[,] points, double offsetX, double offsetY)
+		{
+			double[,] shiftedPoints = new double[points.GetLength(0), 2];
+
+			for (int i = 0; i < points.GetLength(0); i++)
+			{
+				double initialX = points[i, 0];
+				double initialY = points[i, 1];
+
+				(double x, double y) = AddPoints(initialX, initialY, offsetX, offsetY);
+				shiftedPoints[i, 0] = x;
+				shiftedPoints[i, 1] = y;
+			}
+
+			return shiftedPoints;
 		}
 
 		/// <param name="points">
@@ -95,13 +119,7 @@ namespace Paradigms
 
 			return (averageX, averageY);
 		}
-
-		public static double GetDistanceBetween(double point1X, double point1Y, double point2X, double point2Y)
-		{
-			var distanceSquare = Math.Pow(point1X - point2X, 2) + Math.Pow(point1Y - point2Y, 2);
-			return Math.Sqrt(distanceSquare);
-		}
-
+		
 		/// <param name="points">
 		/// In each row:
 		/// Value by index 0 is point X.
@@ -122,6 +140,12 @@ namespace Paradigms
 			
 			var standardDeviation = Math.Sqrt(deviation / points.GetLength(0));
 			return standardDeviation;
+		}
+
+		public static double GetDistanceBetween(double firstX, double firstY, double secondX, double secondY)
+		{
+			var distanceSquare = Math.Pow(firstX - secondX, 2) + Math.Pow(firstY - secondY, 2);
+			return Math.Sqrt(distanceSquare);
 		}
 
 		#endregion
